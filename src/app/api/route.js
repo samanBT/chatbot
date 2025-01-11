@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 
 // Initialize the custom OpenAI client
 const client = new OpenAI({
-  apiKey: "tpsg-W6ujEoL1RMnrhIeUeG9G6hdV848AxCJ",
+  apiKey: "tpsg-x7JT427cxVnprdeWoNjWCDpPyLUjMHX",
   baseURL: "https://api.metisai.ir/openai/v1", // Custom base URL
 });
 
@@ -12,7 +12,8 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { message } = body;
-
+    console.log("message")
+    console.log(message)
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
@@ -31,7 +32,7 @@ export async function POST(req) {
 
     // Call the OpenAI API with the system prompt and user message
     const response = await client.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [systemPrompt, userMessage],
       // max_tokens: 100,
     });

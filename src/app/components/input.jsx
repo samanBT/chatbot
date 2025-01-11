@@ -16,6 +16,7 @@ const Chatbot = () => {
     setInput('');
 
     try {
+      console.log("Start")
       const response = await fetch('/api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -23,11 +24,12 @@ const Chatbot = () => {
       });
 
       const data = await response.json();
+      console.log("data")
+      console.log(data)
       if (data.error) {
         throw new Error(data.error);
       }
 
-      // Add the bot's response
       setMessages([
         ...newMessages,
         { sender: 'bot', text: data.choices[0].message.content },
@@ -41,11 +43,26 @@ const Chatbot = () => {
   };
 
   return (
-    <div  className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-blue-300 to-blue-500 p-4">
-      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6">
-        <h2 className="text-2xl font-bold text-blue-700 text-center mb-4">Travel Expert Chatbot</h2>
-        <div style={{direction:"rtl"}}
-          className="h-96 overflow-y-auto bg-gray-100 p-4 rounded-lg mb-4 border border-gray-300"
+    <div className="relative min-h-screen flex flex-col items-center bg-gradient-to-b from-blue-600 to-blue-400">
+      {/* Background */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/image.jpg" // Replace with your travel background image path
+          alt="Travel Background"
+          className="w-full h-full object-cover opacity-100"
+        />
+      </div>
+
+      {/* Header */}
+      <header className="relative z-10 mt-2 bg-white bg-opacity-40 backdrop-blur-md shadow-md rounded-full px-10 py-2 text-center">
+        <h1 className="text-2xl font-bold text-blue-700">سفر آگاه</h1>
+        <p className="text-sm text-gray-900">دستیار هوشمند شما</p>
+      </header>
+
+      {/* Chat Container */}
+      <main className="relative z-10 mt-2 flex flex-col items-center w-full max-w-5xl bg-gray-50/30 backdrop-blur-md shadow-lg rounded-lg p-6">
+        <div
+          className="flex flex-col gap-3 w-full h-[29rem] overflow-y-auto bg-gray-50/0 backdrop-blur-md p-4 rounded-lg border border-gray-300"
         >
           {messages.map((msg, index) => (
             <div
@@ -58,8 +75,8 @@ const Chatbot = () => {
                 className={`${
                   msg.sender === 'user'
                     ? 'bg-blue-500 text-white'
-                    : 'bg-gray-300 text-gray-800'
-                } p-3 rounded-lg max-w-xs shadow`}
+                    : 'bg-white bg-opacity-80 backdrop-blur-sm text-gray-800'
+                } p-4 rounded-lg max-w-xl shadow-md`}
               >
                 {msg.sender === 'bot' ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -72,22 +89,46 @@ const Chatbot = () => {
             </div>
           ))}
         </div>
-        <div className="flex items-center space-x-3">
+
+        {/* Input Box */}
+        <div className="flex items-center mt-4 w-full space-x-3">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Ask your travel question..."
+            className="flex-1 px-4 py-3 border border-gray-00 rounded-lg 
+                       bg-gray-200/20 backdrop-blur-md shadow-lg focus:outline-none 
+                       focus:ring-2 focus:ring-blue-400 transition 
+                       placeholder-gray-600 text-gray-800"
           />
           <button
             onClick={sendMessage}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center space-x-2 shadow-lg"
           >
-            Send
+            <span>Send</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 10l9-9m0 0l9 9m-9-9v18"
+              />
+            </svg>
           </button>
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 w-full mt-2 text-center text-white text-sm">
+        <p>© 2024 SafarAgah Inc.</p>
+      </footer>
     </div>
   );
 };
