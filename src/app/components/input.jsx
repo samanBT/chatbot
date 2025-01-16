@@ -10,30 +10,34 @@ const Chatbot = () => {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-
+  
     const newMessages = [...messages, { sender: 'user', text: input }];
     setMessages(newMessages);
     setInput('');
-
+  
     try {
-      console.log("Start")
       const response = await fetch('/api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: input }),
       });
-
-      const data = await response.json();
-      console.log("data")
-      console.log(data)
-      if (data.error) {
-        throw new Error(data.error);
+  
+      if (!response.body) throw new Error("Stream not supported");
+  
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+      let botMessage = "";
+  
+      while (!done) {
+        const { value, done: readerDone } = await reader.read();
+        done = readerDone;
+        botMessage += decoder.decode(value, { stream: true });
+        setMessages([
+          ...newMessages,
+          { sender: 'bot', text: botMessage },
+        ]);
       }
-
-      setMessages([
-        ...newMessages,
-        { sender: 'bot', text: data.choices[0].message.content },
-      ]);
     } catch (error) {
       setMessages([
         ...newMessages,
@@ -41,6 +45,7 @@ const Chatbot = () => {
       ]);
     }
   };
+  
 
   return (
     <div className="relative min-h-screen flex flex-col items-center bg-gradient-to-b from-blue-600 to-blue-400">
